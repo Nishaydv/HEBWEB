@@ -1,38 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const Nazms=require('../models/nazms');
+const nazmRouter = express.Router();
 
-const Gazals=require('../models/gazals');
-const gazalRouter = express.Router();
+nazmRouter.use(bodyParser.json());
 
-gazalRouter.use(bodyParser.json());
-
-gazalRouter.route('/')
+nazmRouter.route('/')
   .get((req,res,next) => {
-      Gazals.find({})
-      .then((gazals) => {
+      Nazms.find({})
+      .then((nazms) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazals);
+        res.json(nazms);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .post((req, res, next) => {
-    Gazals.create(req.body)
-    .then((gazal) => {
-        console.log('Gazal Created ', gazal);
+    Nazms.create(req.body)
+    .then((nazm) => {
+        console.log('Nazm Created ', nazm);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazal);
+        res.json(nazm);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .put((req, res, next) => {
     res.statusCode = 403;
-    res.end('PUT operation not supported on /gazals');
+    res.end('PUT operation not supported on /nazms');
 })
 .delete((req, res, next) => {
-    Gazals.remove({})
+    Nazms.remove({})
     .then((resp) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -41,33 +40,33 @@ gazalRouter.route('/')
     .catch((err) => next(err));    
 });
 
-gazalRouter.route('/:gazalId')
+nazmRouter.route('/:nazmId')
 .get((req,res,next) => {
-    Gazals.findById(req.params.gazalId)
-    .then((gazal) => {
+    Nazms.findById(req.params.nazmId)
+    .then((nazm) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazal);
+        res.json(nazm);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .post((req, res, next) => {
     res.statusCode = 403;
-    res.end('POST operation not supported on /gazals/'+ req.params.gazalId);
+    res.end('POST operation not supported on /nazms/'+ req.params.nazmId);
 })
 .put((req, res, next) => {
-    Gazals.findByIdAndUpdate(req.params.gazalId, {
+    Nazms.findByIdAndUpdate(req.params.nazmId, {
         $set: req.body
     }, { new: true })
-    .then((gazal) => {
+    .then((nazm) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazal);
+        res.json(nazm);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .delete((req, res, next) => {
-    Gazals.findByIdAndRemove(req.params.gazalId)
+    Nazms.findByIdAndRemove(req.params.nazmId)
     .then((resp) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -76,5 +75,5 @@ gazalRouter.route('/:gazalId')
     .catch((err) => next(err));
 });
 
-module.exports = gazalRouter;
+module.exports = nazmRouter;
       

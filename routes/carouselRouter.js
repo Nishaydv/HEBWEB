@@ -2,37 +2,37 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const Gazals=require('../models/gazals');
-const gazalRouter = express.Router();
+const Carousels=require('../models/carousels');
+const carouselRouter = express.Router();
 
-gazalRouter.use(bodyParser.json());
+carouselRouter.use(bodyParser.json());
 
-gazalRouter.route('/')
+carouselRouter.route('/')
   .get((req,res,next) => {
-      Gazals.find({})
-      .then((gazals) => {
+      Carousels.find({})
+      .then((carousels) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazals);
+        res.json(carousels);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .post((req, res, next) => {
-    Gazals.create(req.body)
-    .then((gazal) => {
-        console.log('Gazal Created ', gazal);
+    Carousels.create(req.body)
+    .then((carousel) => {
+        console.log('Carousel Created ', carousel);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazal);
+        res.json(carousel);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .put((req, res, next) => {
     res.statusCode = 403;
-    res.end('PUT operation not supported on /gazals');
+    res.end('PUT operation not supported on /carousels');
 })
 .delete((req, res, next) => {
-    Gazals.remove({})
+    Carousels.remove({})
     .then((resp) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -41,9 +41,9 @@ gazalRouter.route('/')
     .catch((err) => next(err));    
 });
 
-gazalRouter.route('/:gazalId')
+carouselRouter.route('/:carouselId')
 .get((req,res,next) => {
-    Gazals.findById(req.params.gazalId)
+    Carousels.findById(req.params.carouselId)
     .then((gazal) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -53,21 +53,21 @@ gazalRouter.route('/:gazalId')
 })
 .post((req, res, next) => {
     res.statusCode = 403;
-    res.end('POST operation not supported on /gazals/'+ req.params.gazalId);
+    res.end('POST operation not supported on /carousels/'+ req.params.carouselId);
 })
 .put((req, res, next) => {
-    Gazals.findByIdAndUpdate(req.params.gazalId, {
+    Carousels.findByIdAndUpdate(req.params.carouselId, {
         $set: req.body
     }, { new: true })
-    .then((gazal) => {
+    .then((carousel) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(gazal);
+        res.json(carousel);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
 .delete((req, res, next) => {
-    Gazals.findByIdAndRemove(req.params.gazalId)
+    Carousels.findByIdAndRemove(req.params.carouselId)
     .then((resp) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -76,5 +76,5 @@ gazalRouter.route('/:gazalId')
     .catch((err) => next(err));
 });
 
-module.exports = gazalRouter;
+module.exports = carouselRouter;
       
