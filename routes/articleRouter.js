@@ -1,14 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
+var authenticate = require('../authenticate');
+const cors=require('./cors');
 const Articles=require('../models/articles');
 const articleRouter = express.Router();
 
 articleRouter.use(bodyParser.json());
 
 articleRouter.route('/')
-  .get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+  .get(cors.cors,(req,res,next) => {
       Articles.find({})
       .then((articles) => {
         res.statusCode = 200;
@@ -17,7 +19,7 @@ articleRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Articles.create(req.body)
     .then((article) => {
         console.log('Article Created ', article);
@@ -27,11 +29,11 @@ articleRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /articles');
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Articles.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -42,7 +44,8 @@ articleRouter.route('/')
 });
 
 articleRouter.route('/:articleId')
-.get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+.get(cors.cors,(req,res,next) => {
     Articles.findById(req.params.articleId)
     .then((article) => {
         res.statusCode = 200;
@@ -51,11 +54,11 @@ articleRouter.route('/:articleId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /articles/'+ req.params.articleId);
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Articles.findByIdAndUpdate(req.params.articleId, {
         $set: req.body
     }, { new: true })
@@ -66,7 +69,7 @@ articleRouter.route('/:articleId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Articles.findByIdAndRemove(req.params.articleId)
     .then((resp) => {
         res.statusCode = 200;

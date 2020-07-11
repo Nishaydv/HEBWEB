@@ -2,12 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Shyris=require('../models/shyris');
+const cors=require('./cors');
+var authenticate = require('../authenticate');
 const shyriRouter = express.Router();
 
 shyriRouter.use(bodyParser.json());
 
 shyriRouter.route('/')
-  .get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+  .get(cors.cors,(req,res,next) => {
       Shyris.find({})
       .then((shyris) => {
         res.statusCode = 200;
@@ -16,7 +19,7 @@ shyriRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Shyris.create(req.body)
     .then((shyri) => {
         console.log('Shyri Created ', shyri);
@@ -26,11 +29,11 @@ shyriRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /shyris');
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Shyris.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -41,7 +44,8 @@ shyriRouter.route('/')
 });
 
 shyriRouter.route('/:shyriId')
-.get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+.get(cors.cors,(req,res,next) => {
     Shyris.findById(req.params.shyriId)
     .then((shyri) => {
         res.statusCode = 200;
@@ -50,11 +54,11 @@ shyriRouter.route('/:shyriId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /shyris/'+ req.params.shyriId);
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Shyris.findByIdAndUpdate(req.params.shyriId, {
         $set: req.body
     }, { new: true })
@@ -65,7 +69,7 @@ shyriRouter.route('/:shyriId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Shyris.findByIdAndRemove(req.params.shyriId)
     .then((resp) => {
         res.statusCode = 200;

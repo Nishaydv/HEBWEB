@@ -25,11 +25,7 @@ const gazalSchema = new Schema({
         type:Number,
         default:0,
         required:true
-    },
-    featured:{
-        type:Boolean,
-        default:false
-    }
+    } 
 },{
     timestamps: true
 });

@@ -1,14 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
+var authenticate = require('../authenticate');
+const cors=require('./cors');
 const Carousels=require('../models/carousels');
 const carouselRouter = express.Router();
 
 carouselRouter.use(bodyParser.json());
 
 carouselRouter.route('/')
-  .get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+  .get(cors.cors,(req,res,next) => {
       Carousels.find({})
       .then((carousels) => {
         res.statusCode = 200;
@@ -17,7 +19,7 @@ carouselRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Carousels.create(req.body)
     .then((carousel) => {
         console.log('Carousel Created ', carousel);
@@ -27,11 +29,11 @@ carouselRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /carousels');
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Carousels.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -42,7 +44,8 @@ carouselRouter.route('/')
 });
 
 carouselRouter.route('/:carouselId')
-.get((req,res,next) => {
+.options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
+.get(cors.cors,(req,res,next) => {
     Carousels.findById(req.params.carouselId)
     .then((gazal) => {
         res.statusCode = 200;
@@ -51,11 +54,11 @@ carouselRouter.route('/:carouselId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /carousels/'+ req.params.carouselId);
 })
-.put((req, res, next) => {
+.put(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Carousels.findByIdAndUpdate(req.params.carouselId, {
         $set: req.body
     }, { new: true })
@@ -66,7 +69,7 @@ carouselRouter.route('/:carouselId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(cors.corswithOptions,authenticate.verifyUser,(req, res, next) => {
     Carousels.findByIdAndRemove(req.params.carouselId)
     .then((resp) => {
         res.statusCode = 200;
