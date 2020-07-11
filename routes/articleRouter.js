@@ -11,7 +11,7 @@ articleRouter.use(bodyParser.json());
 articleRouter.route('/')
 .options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
   .get(cors.cors,(req,res,next) => {
-      Articles.find({})
+      Articles.find(req.query)
       .then((articles) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');

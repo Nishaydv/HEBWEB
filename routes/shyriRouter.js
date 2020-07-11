@@ -11,7 +11,7 @@ shyriRouter.use(bodyParser.json());
 shyriRouter.route('/')
 .options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
   .get(cors.cors,(req,res,next) => {
-      Shyris.find({})
+      Shyris.find(req.query)
       .then((shyris) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');

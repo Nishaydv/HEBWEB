@@ -11,7 +11,7 @@ nazmRouter.use(bodyParser.json());
 nazmRouter.route('/')
 .options(cors.corswithOptions,(req,res)=>{res.sendStatus(200);})
   .get(cors.cors,(req,res,next) => {
-      Nazms.find({})
+      Nazms.find(req.query)
       .then((nazms) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
